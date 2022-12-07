@@ -15,6 +15,18 @@ public class StringTest {
 
      */
     @Test
+    public void test4(){
+        String s1="javaEEhadoop";
+        String s2="javaEE";
+        String s3=s2+"hadoop";
+        System.out.println(s1 == s3);//false
+
+        final String s4="javaEE";//常量
+        String s5=s4+"hadoop";
+        System.out.println(s1 == s5);//true
+    }
+
+    @Test
     public void test3(){
         String s1="javaEE";
         String s2="hadoop";
