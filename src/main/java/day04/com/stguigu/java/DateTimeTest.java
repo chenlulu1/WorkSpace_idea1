@@ -91,6 +91,7 @@ public class DateTimeTest {
         System.out.println(days);
         System.out.println(calendar.get(Calendar.DAY_OF_YEAR));
         //set()
+        //calendar可变性
         calendar.set(Calendar.DAY_OF_MONTH,22);
         days=calendar.get(Calendar.DAY_OF_MONTH);
         System.out.println(days);
