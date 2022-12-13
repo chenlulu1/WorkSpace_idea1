@@ -25,7 +25,7 @@ public class DateTimeTest {
      *  1.1 格式化：日期---->字符串
      *  1.2 解析：格式化的逆过程。字符串---->日期
      *
-     * 2、SimpleDateFormat的实例化
+     * 2、SimpleDateFormat的实例化:new+构造器
      */
     @Test
     public void testSimpleDateFormat() throws ParseException {
