@@ -3,10 +3,7 @@ package day06.com.stguigu.java;
 import org.junit.Test;
 
 import java.sql.SQLOutput;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  *1.list接口框架
@@ -82,7 +79,43 @@ Object remove(int index):移除指定index位置的元素，并返回此元素
 Object set(int index, Object ele):设置指定index位置的元素为ele
 
 List subList(int fromIndex, int toIndex):返回从fromIndex到toIndex位置的子集合
+
+总结：常用方法
+增：add(Object obj)
+删:remove(int index)/remove(Object obj)
+改:set(int index,Object ele)
+查:get(int index)
+插:add(int index,Object ele)
+长度：size()
+遍历：①Iterator迭代器方式
+     ②增强for循环
+     ③普通的循环
+
      */
+    @Test
+    public void test3(){
+        ArrayList list=new ArrayList();
+        list.add(123);
+        list.add(456);
+        list.add("AA");
+        list.add(new Person("Tom",12));
+        list.add(456);
+        //①Iterator迭代器方式
+        Iterator iterator = list.iterator();
+        while (iterator.hasNext()){
+            System.out.println(iterator.next());
+        }
+        System.out.println("*********************************");
+        //②增强for循环
+        for (Object obj:list){
+            System.out.println(obj);
+        }
+        System.out.println("*********************************");
+        //③普通的循环
+        for (int i = 0; i < list.size(); i++) {
+            System.out.println(list.get(i));
+        }
+    }
     @Test
     public void test2(){
         ArrayList list=new ArrayList();
