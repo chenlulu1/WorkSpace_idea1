@@ -2,8 +2,7 @@ package day07.com.stguigu.java;
 
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.*;
 
 /**
  * 一、Map的实现类的结构
@@ -44,7 +43,7 @@ import java.util.Hashtable;
  *                  如果equals()返回true：使用value1替换value2.
  *
  *       补充：关于情况2和情况3：此时key1-value1和原来的数据以链表的方式存储。
- *       在不断的添加过程中，会涉及到扩容问题，默认的扩容方式：扩容为原来容量的2倍，并将原有的数据复制过来。
+ *       在不断的添加过程中，会涉及到扩容问题，当超出临界值（且存放的位置非空）时，扩容。默认的扩容方式：扩容为原来容量的2倍，并将原有的数据复制过来。
  *
  *       jdk8 相较于jdk7在底层实现方面的不同：
  *       1.new HashMap()：底层没有创建一个长度为16的数组
@@ -54,10 +53,171 @@ import java.util.Hashtable;
  *         当数组的某一个索引位置上的元素以链表形式存在的数据个数>8 且当前数组的长度 >64时，
  *         此时此索引位置上的所有数据改为使用红黑树存储。
  *
+ *
+ *         DEFAULT_INITIAL_CAPACITY : HashMap的默认容量，16
+ *         DEFAULT_LOAD_FACTOR：HashMap的默认加载因子 0.75
+ *         threshold：扩容的临界值，=容量*填充因子 16*0.75=12
+ *         TREEIFY_THRESHOLD：Bucket中链表长度大于该默认值，转化为红黑树：8
+ *         MIN_TREEIFY_CAPACITY：桶中的Node被树化时最小的hash表容量：64
+ *
+ * 四、linkedHashMap的底层实现原理（了解）
+ *      源码中：
+ *      static class Entry<K,V> extends HashMap.Node<K,V> {
+ *          Entry<K,V> before, after;//能够记录添加的元素的先后顺序
+ *              Entry(int hash, K key, V value, Node<K,V> next) {
+ *                  super(hash, key, value, next);
+ *              }
+ *          }
+ *
+ * 五、Map中定义的方法
+ *  添加、删除、修改操作：
+ *  Object put(Object key,Object value)：将指定key-value添加到(或修改)当前map对象中
+ *  void putAll(Map m):将m中的所有key-value对存放到当前map中
+ *  Object remove(Object key)：移除指定key的key-value对，并返回value
+ *  void clear()：清空当前map中的所有数据
+ *  元素查询的操作：
+ *  Object get(Object key)：获取指定key对应的value
+ *  boolean containsKey(Object key)：是否包含指定的key
+ *  boolean containsValue(Object value)：是否包含指定的value
+ *  int size()：返回map中key-value对的个数
+ *  boolean isEmpty()：判断当前map是否为空
+ *  boolean equals(Object obj)：判断当前map和参数对象obj是否相等
+ *  元视图操作的方法：
+ *  Set keySet()：返回所有key构成的Set集合
+ *  Collection values()：返回所有value构成的Collection集合
+ *  Set entrySet()：返回所有key-value对构成的Set集合
+ *
+ *
+ * 总结：常用的方法
+ * 添加：put(Object key,Object value)
+ * 删除：remove(Object key)
+ * 修改：put(Object key,Object value)
+ * 查询：get(Object key)
+ * 长度：size()
+ * 遍历：keySet()/values()/entrySet()
+ *
+ *
  * @author shkstart
  * @create 2022-12-20 20:47
  */
 public class MapTest {
+    /*
+     *  元视图操作的方法：
+     *  Set keySet()：返回所有key构成的Set集合
+     *  Collection values()：返回所有value构成的Collection集合
+     *  Set entrySet()：返回所有key-value对构成的Set集合
+     */
+    @Test
+    public void test5(){
+        Map map = new HashMap();
+        //添加
+        map.put("AA",1234);
+        map.put(45,123);
+        map.put("BB",56);
+        // Set keySet()：返回所有key构成的Set集合
+        Set set = map.keySet();
+        Iterator iterator = set.iterator();
+        while (iterator.hasNext()){
+            System.out.println(iterator.next());
+        }
+        System.out.println();
+        //Collection values()：返回所有value构成的Collection集合
+        Collection values = map.values();
+        for (Object obj:values){
+            System.out.println(obj);
+        }
+        System.out.println();
+        //Set entrySet()：返回所有key-value对构成的Set集合
+        //方式一：entrySet
+        Set set1 = map.entrySet();
+        Iterator iterator1 = set1.iterator();
+        while (iterator1.hasNext()){
+            Object obj = iterator1.next();
+            //entrySet集合中的元素都是entry
+            Map.Entry entry = (Map.Entry) obj;
+            System.out.println(entry.getKey() + "--->" + entry.getValue());
+        }
+        System.out.println();
+        //方式二
+        Set set2 = map.keySet();
+        Iterator iterator2 = set.iterator();
+        while (iterator2.hasNext()){
+            Object key = iterator2.next();
+            Object value = map.get(key);
+            System.out.println(key + "====" + value);
+        }
+    }
+    /*
+     *  元素查询的操作：
+     *  Object get(Object key)：获取指定key对应的value
+     *  boolean containsKey(Object key)：是否包含指定的key
+     *  boolean containsValue(Object value)：是否包含指定的value
+     *  int size()：返回map中key-value对的个数
+     *  boolean isEmpty()：判断当前map是否为空
+     *  boolean equals(Object obj)：判断当前map和参数对象obj是否相等
+     */
+    @Test
+    public void test4(){
+        Map map = new HashMap();
+        //添加
+        map.put("AA",123);
+        map.put(45,123);
+        map.put("BB",56);
+        //Object get(Object key)：获取指定key对应的value
+        System.out.println(map.get(45));
+        //boolean containsKey(Object key)：是否包含指定的key
+        boolean isExist = map.containsKey("BB");
+        System.out.println(isExist);
+//        boolean containsValue(Object value)：是否包含指定的value
+        isExist=map.containsValue(123);
+        System.out.println(isExist);
+        //boolean isEmpty()：判断当前map是否为空
+        map.clear();
+        System.out.println(map.isEmpty());
+
+    }
+    /*
+     *  添加、删除、修改操作：
+     *  Object put(Object key,Object value)：将指定key-value添加到(或修改)当前map对象中
+     *  void putAll(Map m):将m中的所有key-value对存放到当前map中
+     *  Object remove(Object key)：移除指定key的key-value对，并返回value
+     *  void clear()：清空当前map中的所有数据
+     */
+    @Test
+    public void test3(){
+        Map map = new HashMap();
+        //添加
+        map.put("AA",123);
+        map.put(45,123);
+        map.put("BB",56);
+        //修改
+        map.put("AA",87);
+        System.out.println(map);
+        //void putAll(Map m):将m中的所有key-value对存放到当前map中
+        Map map1 = new HashMap();
+        map1.put("CC",123);
+        map1.put("DD",123);
+        map.putAll(map1);
+        System.out.println(map);
+        //Object remove(Object key)：移除指定key的key-value对，并返回value
+        Object value = map.remove("CC");
+        System.out.println(value);
+        System.out.println(map);
+        //void clear()：清空当前map中的所有数据
+        map.clear();
+        System.out.println(map.size());
+        System.out.println(map);
+    }
+
+    @Test
+    public void test2(){
+        Map map = new HashMap();
+//        map=new LinkedHashMap();
+        map.put(123,"AA");
+        map.put(345,"BB");
+        map.put(12,"CC");
+        System.out.println(map);
+    }
     @Test
     public void test1(){
         HashMap map = new HashMap();

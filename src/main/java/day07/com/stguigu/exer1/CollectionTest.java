@@ -12,7 +12,7 @@ import java.util.List;
  * @author shkstart
  * @create 2022-12-20 20:34
  */
-public class CollectionTest {
+public class  CollectionTest {
     @Test
     public void test1(){
         Collection list = new ArrayList();
